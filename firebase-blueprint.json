@@ -1,0 +1,157 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "System user with role-based access control.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "User's full name" },
+        "email": { "type": "string", "format": "email", "description": "User's email address" },
+        "role": { "type": "string", "enum": ["super_admin", "admin", "operator", "client", "sales"], "description": "User's role in the system" },
+        "status": { "type": "string", "enum": ["active", "inactive"], "description": "User's account status" },
+        "lastLoginAt": { "type": "string", "format": "date-time", "description": "Last login timestamp" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "email", "role", "status"]
+    },
+    "Client": {
+      "title": "Client",
+      "description": "A business client managed by the platform.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Commercial name" },
+        "legalName": { "type": "string", "description": "Legal name (optional)" },
+        "segment": { "type": "string", "description": "Business niche" },
+        "email": { "type": "string", "format": "email" },
+        "phone": { "type": "string" },
+        "whatsapp": { "type": "string" },
+        "websiteUrl": { "type": "string", "format": "uri" },
+        "instagramUrl": { "type": "string", "format": "uri" },
+        "city": { "type": "string" },
+        "state": { "type": "string" },
+        "brandTone": { "type": "string" },
+        "brandGuidelines": { "type": "object" },
+        "restrictions": { "type": "object" },
+        "logoUrl": { "type": "string", "format": "uri" },
+        "status": { "type": "string", "enum": ["active", "inactive"] },
+        "planId": { "type": "string", "description": "Reference to a Plan" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "segment", "email", "status"]
+    },
+    "Plan": {
+      "title": "Plan",
+      "description": "Subscription plan defining limits and pricing.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "monthlyPrice": { "type": "number" },
+        "creativeLimit": { "type": "integer" },
+        "videoLimit": { "type": "integer" },
+        "revisionLimit": { "type": "integer" },
+        "priorityLevel": { "type": "integer" },
+        "deliverySlaHours": { "type": "integer" },
+        "isActive": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "monthlyPrice", "isActive"]
+    },
+    "Campaign": {
+      "title": "Campaign",
+      "description": "A marketing campaign for a client.",
+      "type": "object",
+      "properties": {
+        "clientId": { "type": "string" },
+        "createdBy": { "type": "string" },
+        "name": { "type": "string" },
+        "goal": { "type": "string" },
+        "offer": { "type": "string" },
+        "audience": { "type": "string" },
+        "channel": { "type": "string" },
+        "formats": { "type": "array", "items": { "type": "string" } },
+        "priority": { "type": "string", "enum": ["low", "medium", "high"] },
+        "briefing": { "type": "object" },
+        "status": { "type": "string", "enum": ["draft", "briefing_pending", "ready_to_submit", "submitted", "processing", "internal_review", "client_review", "revision_requested", "approved", "delivered", "failed", "cancelled"] },
+        "dueDate": { "type": "string", "format": "date-time" },
+        "submittedAt": { "type": "string", "format": "date-time" },
+        "approvedAt": { "type": "string", "format": "date-time" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["clientId", "name", "goal", "status"]
+    },
+    "Job": {
+      "title": "Job",
+      "description": "An internal processing job for a campaign.",
+      "type": "object",
+      "properties": {
+        "campaignId": { "type": "string" },
+        "internalJobType": { "type": "string" },
+        "externalJobId": { "type": "string" },
+        "requestPayload": { "type": "object" },
+        "responsePayload": { "type": "object" },
+        "status": { "type": "string", "enum": ["queued", "processing", "completed", "failed"] },
+        "attemptCount": { "type": "integer" },
+        "lastError": { "type": "string" },
+        "startedAt": { "type": "string", "format": "date-time" },
+        "finishedAt": { "type": "string", "format": "date-time" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["campaignId", "status"]
+    },
+    "Asset": {
+      "title": "Asset",
+      "description": "A creative asset generated for a campaign.",
+      "type": "object",
+      "properties": {
+        "campaignId": { "type": "string" },
+        "jobId": { "type": "string" },
+        "assetType": { "type": "string", "enum": ["image", "video", "copy", "caption", "script", "package"] },
+        "format": { "type": "string" },
+        "title": { "type": "string" },
+        "fileUrl": { "type": "string", "format": "uri" },
+        "previewUrl": { "type": "string", "format": "uri" },
+        "textContent": { "type": "string" },
+        "metadata": { "type": "object" },
+        "versionNumber": { "type": "integer" },
+        "parentAssetId": { "type": "string" },
+        "isVisibleToClient": { "type": "boolean" },
+        "isFinal": { "type": "boolean" },
+        "status": { "type": "string", "enum": ["generated", "internal_approved", "internal_rejected", "visible_to_client", "client_approved", "client_rejected", "revision_requested", "final"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["campaignId", "assetType", "status"]
+    },
+    "Feedback": {
+      "title": "Feedback",
+      "description": "Feedback or revision request for a campaign or asset.",
+      "type": "object",
+      "properties": {
+        "campaignId": { "type": "string" },
+        "assetId": { "type": "string" },
+        "authorUserId": { "type": "string" },
+        "authorType": { "type": "string", "enum": ["internal", "client"] },
+        "feedbackType": { "type": "string" },
+        "message": { "type": "string" },
+        "status": { "type": "string", "enum": ["open", "in_progress", "resolved", "archived"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["campaignId", "authorUserId", "message", "status"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": { "schema": "User", "description": "System users" },
+    "/clients/{clientId}": { "schema": "Client", "description": "Business clients" },
+    "/plans/{planId}": { "schema": "Plan", "description": "Subscription plans" },
+    "/campaigns/{campaignId}": { "schema": "Campaign", "description": "Marketing campaigns" },
+    "/campaigns/{campaignId}/jobs/{jobId}": { "schema": "Job", "description": "Processing jobs for a campaign" },
+    "/campaigns/{campaignId}/assets/{assetId}": { "schema": "Asset", "description": "Generated assets for a campaign" },
+    "/campaigns/{campaignId}/feedbacks/{feedbackId}": { "schema": "Feedback", "description": "Feedback and revision requests" }
+  }
+}
